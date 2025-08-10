@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>About</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style_pages.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="remicalc.png" type="image/png">
+<meta name="theme-color" content="#006400">
+
+</head>
+<body>
+  <div class="container">
+    <h1>About This App</h1>
+    <p>
+      This project was born out of simple observation — watching Kenya Prisons Service officers tirelessly working with an age-old manual system,  
+      performing the same complex calculations day in and day out.  
+      I took time to speak with them, to understand their challenges, and to suggest ways the process could be modernized.
+    </p>
+    <p>
+      It took tens of days to fully understand the entire concept, and in the process I distilled it into a <strong>9-Point Gold Standard</strong>  
+      — a practical, precise guide to ensure accuracy, consistency, and fairness in sentence computation.
+    </p>
+    <p>
+      I could not resist the challenge to leave a positive mark at Kiambu Main Prison and, hopefully, across the entire Kenya Prisons Service.  
+      After navigating through many misconceptions and assumptions… I finally scored it.
+    </p>
+
+    <h2>The 9-Point Gold Standard</h2>
+    <ol>
+      <li>When computing LPD and Remission, treat a month as 30 days and a year as 12 months.</li>
+      <li>When computing EPD, especially when borrowing, borrow an actual calendar month from the previous full month.</li>
+      <li>For decimals ≥ 0.5, round up. For decimals &lt; 0.5, round down.</li>
+      <li>1–30 days → no remission.</li>
+      <li>31–44 days → remission is the number of days above 30.</li>
+      <li>From 45 days → remission is exactly one third.</li>
+      <li>LPD = (Sentence Date + Sentence) − 1 day. (The day of sentencing counts as served.)</li>
+      <li>Remission is exactly one third. Get the nearest number with a perfect third; remaining units should be converted down (years → months → days).</li>
+      <li>EPD = (LPD − Remission) + 1 day. This guide must be followed without exception.</li>
+    </ol>
+
+    <p style="margin-top:2em;">
+      <em>Signed,</em><br>
+      <strong>KIA/345/25/LS</strong> — also known as “the inmate who smuggled in nothing but math and left with an app.”
+    </p>
+
+    <a href="index.html">← Back to Calculator</a>
+  </div>
+</body>
+</html>
