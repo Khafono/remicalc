@@ -1,21 +1,25 @@
 {
-  "name": "RemiCalc",
-  "short_name": "RemiCalc",
-  "description": "Kenya Prisons Service Remission Calculator",
-  "start_url": "index.html",
+  "name": "Remicalc",
+  "short_name": "Remicalc",
+  "description": "Sentence & Remission Calculator",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#006400",
+  "theme_color": "#ffffff",
+  "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "remicalc.png",
+      "src": "remicalc_icon_192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "remicalc.png",
+      "src": "remicalc_icon_512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

@@ -1,225 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Kenya Prisons Service Remission Calculator</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<link rel="stylesheet" href="style.css" />
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#006400">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RemiCalc - Kenya Prison Remission Calculator</title>
 
+  <!-- PWA / icons -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" type="image/png" sizes="192x192" href="remicalc_icon_192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="remicalc_icon_512.png">
+
+  <!-- main stylesheet -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="logo-container">
-  <h2> RemiCalc </h2>
-</div
-<h2>Kenya Prisons Service Remission Calculator</h2>
-<div class="prison-stripes">
-  <div class="green"></div>
-  <div class="red"></div>
-  <div class="yellow"></div>
+
+<header class="app-header">
+  <!-- update the src below to match where you stored the file:
+       - if you placed the logo in an 'images' folder: src="images/logo.png"
+       - if you placed it in site root: src="logo.png" -->
+  <img src="images/logo.png" alt="RemiCalc logo" class="logo-img">
+
+  <h3 class="brand-sub">The Ultimate Kenya Prisons Sentence Remission Calculator</h3>
+
+  <div class="prison-stripes" aria-hidden="true">
+    <div class="green"></div>
+    <div class="red"></div>
+    <div class="yellow"></div>
+  </div>
+</header>
+
+<main class="container">
+  <form id="remissionForm" onsubmit="return false;">
+    <label for="sentenceDate">Sentence date (Date of committal):</label>
+    <input id="sentenceDate" type="date" />
+
+    <label for="years">Years (as on warrant):</label>
+    <input id="years" type="number" min="0" value="0" />
+
+    <label for="months">Months (as on warrant — keep exactly as passed):</label>
+    <input id="months" type="number" min="0" value="0" />
+
+    <label for="days">Days (as on warrant):</label>
+    <input id="days" type="number" min="0" value="0" />
+
+    <div class="btn-row">
+      <button id="calcBtn" type="button">Calculate</button>
+      <button id="clearBtn" type="button" class="muted">Clear</button>
+    </div>
+
+    <div class="note">
+      <strong>Notes:</strong> This follows a 10-point Gold Standard. See About below.
+    </div>
+  </form>
+
+  <section id="result" class="result" style="display:none;">
+    <table>
+      <tbody id="resultBody"></tbody>
+    </table>
+  </section>
+  <h2></h2>
+  <div class="links">
+        <a href="acknowledgement.html">Acknowledgement</a>
+    <a <a href="disclaimer.html">Disclaimer</a>
+	 <a href="about.html">About</a>
 </div>
 
-<form id="remissionForm">
-  <label for="sentence_date">Sentence Date:</label>
-  <input type="text" id="sentence_date" name="sentence_date" placeholder="dd/mm/yyyy" required>
+</main>
 
-  <label for="sentence_years">Years:</label>
-  <input type="number" id="sentence_years" name="sentence_years" min="0" value="0">
+<!-- keep your script file name (script.js) -->
+<script src="script.js"></script>
 
-  <label for="sentence_months">Months:</label>
-  <input type="number" id="sentence_months" name="sentence_months" min="0" max="11" value="0">
-
-  <label for="sentence_days">Days:</label>
-  <input type="number" id="sentence_days" name="sentence_days" min="0" max="364" value="0">
- <div> </div>
-  <button type="submit">Calculate</button>
-</form>
-
-<div id="result"></div>
-<div class="extra-links">
-  <a href="about.html">About</a> |
-  <a href="acknowledgement.html">Acknowledgment</a> |
-  <a href="disclaimer.html">Disclaimer</a>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<!-- service worker registration (keeps your manifest/service-worker behavior) -->
 <script>
-// Initialize date picker in Kenyan format
-flatpickr("#sentence_date", {
-  dateFormat: "d/m/Y",
-  allowInput: true
-});
-
-document.getElementById('remissionForm').addEventListener('submit', function (event) {
-  event.preventDefault();
-  calculateRemission();
-});
-
-/**
- * Kenya Prison Remission Calculator
- * Implements the 9-point guide as the gold standard.
- */
-function calculateRemission() {
-  const sentenceDateInput = document.getElementById('sentence_date').value;
-  const years = parseInt(document.getElementById('sentence_years').value, 10) || 0;
-  const months = parseInt(document.getElementById('sentence_months').value, 10) || 0;
-  const days = parseInt(document.getElementById('sentence_days').value, 10) || 0;
-
-  const resultDiv = document.getElementById('result');
-  resultDiv.innerHTML = '';
-
-  if (!sentenceDateInput) {
-    alert('Please enter a valid sentence date.');
-    return;
-  }
-  if (years < 0 || months < 0 || days < 0) {
-    alert('Duration values cannot be negative.');
-    return;
-  }
-  if (months > 11) {
-    alert('Months should be between 0 and 11.');
-    return;
-  }
-  if (days > 364) {
-    alert('Days should be between 0 and 364.');
-    return;
-  }
-
-  // Parse Kenyan date format to JS Date
-  const [dayStr, monthStr, yearStr] = sentenceDateInput.split('/');
-  const sentenceDateISO = `${yearStr}-${monthStr}-${dayStr}`;
-
-  // Step 1: Compute LPD = (Sentence Date + Sentence Duration) - 1 day
-  let lpdDate = addDurationToDate(sentenceDateISO, years, months, days);
-  lpdDate.setDate(lpdDate.getDate() - 1); // Subtract 1 day
-
-  // Step 2: Compute remission according to rules
-  const totalSentenceDays = years * 360 + months * 30 + days; // fixed month=30 days, year=12 months
-  let remission = { months: 0, days: 0 };
-
-  if (totalSentenceDays <= 30) {
-    remission.months = 0;
-    remission.days = 0;
-  } else if (totalSentenceDays >= 31 && totalSentenceDays <= 44) {
-    remission.months = 0;
-    remission.days = totalSentenceDays - 30;
-  } else {
-    remission = calculatePerfectThird(years, months, days);
-  }
-
-  // Step 3: Compute EPD = (LPD - Remission) + 1 day
-  let epdDate = subtractRemissionFromLPD(lpdDate, remission);
-  epdDate.setDate(epdDate.getDate() + 1);
-
-  // Display results
-  resultDiv.innerHTML = `
-    <strong>LPD (Latest Possible Discharge):</strong> ${formatDateKenyan(lpdDate)}<br/>
-    <strong>Remission:</strong> ${remission.months} month${remission.months !== 1 ? 's' : ''}, ${remission.days} day${remission.days !== 1 ? 's' : ''}<br/>
-    <strong>EPD (Earliest Possible Discharge):</strong> ${formatDateKenyan(epdDate)}
-  `;
-}
-
-function addDurationToDate(startDateStr, y, m, d) {
-  const startDate = new Date(startDateStr);
-  let year = startDate.getFullYear() + y;
-  let month = startDate.getMonth() + m;
-  let day = startDate.getDate() + d;
-
-  while (day > 30) {
-    day -= 30;
-    month += 1;
-  }
-  while (month > 11) {
-    month -= 12;
-    year += 1;
-  }
-  return new Date(year, month, day);
-}
-
-function calculatePerfectThird(y, m, d) {
-  let remissionMonths = 0;
-  let remissionDays = 0;
-
-  if (y > 0) {
-    const yearsThird = y / 3;
-    const wholeYears = Math.floor(yearsThird);
-    const fractionalYears = yearsThird - wholeYears;
-
-    remissionMonths += wholeYears * 4;
-    const remMonthsFromFraction = fractionalYears * 12;
-    remissionMonths += roundDecimal(remMonthsFromFraction);
-  }
-
-  if (m > 0) {
-    const monthsThird = m / 3;
-    const wholeMonths = Math.floor(monthsThird);
-    const fractionalMonths = monthsThird - wholeMonths;
-
-    remissionMonths += wholeMonths;
-    remissionDays += roundDecimal(fractionalMonths * 30);
-  }
-
-  if (d > 0) {
-    const daysThird = d / 3;
-    remissionDays += roundDecimal(daysThird);
-  }
-
-  while (remissionDays >= 30) {
-    remissionDays -= 30;
-    remissionMonths += 1;
-  }
-
-  return { months: remissionMonths, days: remissionDays };
-}
-
-function roundDecimal(num) {
-  return num - Math.floor(num) >= 0.5 ? Math.ceil(num) : Math.floor(num);
-}
-
-function subtractRemissionFromLPD(lpdDate, remission) {
-  let epd = new Date(lpdDate.getTime());
-  let day = epd.getDate() - remission.days;
-  let month = epd.getMonth();
-  let year = epd.getFullYear();
-
-  while (day <= 0) {
-    month -= 1;
-    if (month < 0) {
-      month = 11;
-      year -= 1;
-    }
-    day += daysInMonth(month, year);
-  }
-
-  month -= remission.months;
-  while (month < 0) {
-    month += 12;
-    year -= 1;
-  }
-
-  epd = new Date(year, month, day);
-  return epd;
-}
-
-function daysInMonth(month, year) {
-  return new Date(year, month + 1, 0).getDate();
-}
-
-function formatDateKenyan(date) {
-  const d = String(date.getDate()).padStart(2, '0');
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const y = date.getFullYear();
-  return `${d}/${m}/${y}`;
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(() => console.log("Service Worker registered"))
+      .catch((err) => console.error("Service Worker registration failed:", err));
+  });
 }
 </script>
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js')
-    .then(() => console.log('Service Worker registered.'));
-}
-</script>
-
-
 </body>
 </html>
