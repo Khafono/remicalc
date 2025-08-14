@@ -275,7 +275,15 @@ document.addEventListener('DOMContentLoaded', function(){
     const remission = computeRemissionFromSentence(y, m, d);
 
     // EPD = (LPD - remission) + 1 day (calendar borrowing)
-    const epdCalDate = subtractRemissionFromCalendarLPD(lpdCalDate, remission);
+    // EPD = (LPD - remission) + 1 day (calendar borrowing)
+let epdCalDate;
+if ((y*360 + m*30 + d) <= 30) {
+    // Short sentence: no remission, EPD = LPD
+    epdCalDate = lpdCalDate;
+} else {
+    epdCalDate = subtractRemissionFromCalendarLPD(lpdCalDate, remission);
+}
+
 
     // Format remission for display as "X years Y months Z days" (always show components)
     const remParts = [
